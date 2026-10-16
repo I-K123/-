@@ -1,0 +1,272 @@
+html {
+    scroll-behavior: smooth;
+}
+
+/* 全体のリセットと基本デザイン */
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* ヘッダーのデザイン */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 15px 20px;
+}
+
+#menu-toggle {
+    background: none;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* メイン部分 */
+main {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* 🔒 横から飛び出すメニュー（最初は画面の外に隠す） */
+#side-menu {
+    position: fixed;
+    top: 0;
+    right: -250px; /* 横幅分（250px）だけ右側に隠す */
+    width: 250px;
+    height: 100%;
+    background-color: #444;
+    padding-top: 60px;
+    transition: right 0.3s; /* 0.3秒かけてなめらかに動かす */
+}
+
+#side-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+#side-menu li a {
+    display: block;
+    color: white;
+    padding: 15px 20px;
+    text-decoration: none;
+}
+
+#side-menu li a:hover {
+    background-color: #555;
+}
+
+/* 🔓 【重要】このクラスがついたら画面内に現れる */
+#side-menu.open {
+    right: 0;
+}
+
+/* 一番下に以下のコードを追加してください */
+
+/* 🔒 暗い背景（最初は非表示、透明） */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 黒色で不透明度50% */
+    z-index: 5; /* メインコンテンツより上に重ねる */
+    opacity: 0;
+    pointer-events: none; /* 透明なときはクリックをすり抜けるようにする */
+    transition: opacity 0.3s; /* 0.3秒かけてなめらかに変化 */
+}
+
+/* メニューの重ね順をオーバーレイよりさらに上に設定（重要） */
+#side-menu {
+    z-index: 10;
+}
+
+/* 🔓 メニューが開いたとき、背景も一緒にじわっと暗くする */
+#overlay.open {
+    opacity: 1;
+    pointer-events: auto; /* 暗くなったらクリックできるようにする */
+}
+
+/* --- 🌟 スライダー全体の枠 --- */
+.slider-container {
+    position: relative;
+    max-width: 800px;
+    margin: 30px auto;
+    overflow: hidden; /* 🌟 枠からはみ出た画像を隠す */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 🌟 画像を乗せる横長のレール */
+.slider-track {
+    display: flex; /* 画像を横一列に並べる */
+    width: 100%; /* 画像3枚分（100% × 3）の長さ */
+    transition: transform 0.5s ease-in-out; /* 🌟 0.5秒かけてするっと動かす */
+}
+
+/* レールの中の画像1枚ずつのサイズ */
+.slider-track img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ボタンとドットのCSSは今までと同じです */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 4px;
+    z-index: 2; /* 画像より上に表示 */
+}
+
+#prev-btn { left: 10px; }
+#next-btn { right: 10px; }
+.slider-btn:hover { background-color: rgba(0, 0, 0, 0.8); }
+
+.dots-container {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: rgba(255, 255, 255, 1);
+    transform: scale(1.2);
+}
+
+.scratchbutton, .scratchbutton:visited {
+    display: flex;
+    flex-direction: column; /* 中身を横ではなく「縦」に並べる */
+    align-items: center;    /* 縦並びにしたボタンを真ん中に寄せる */
+    gap: 15px;              /* ボタンとボタンの間の隙間を15pxあける */
+    margin-top: 20px;  
+    background-color: #333; /* ボタンの背景色（ヘッダーと同じ黒） */
+    color: rgb(6, 240, 25) !important; /* 文字の色 */
+    border: none;
+    padding: 12px 30px; /* ボタンの上下左右の隙間（サイズ） */
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 25px; /* ボタンの角を丸くしてカプセル型にする */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* ほんのり影をつける */
+    transition: all 0.3s; /* マウスを乗せた時の変化をなめらかに */
+}
+
+.scratchbutton:hover {
+    background-color: #555; /* 少し明るい黒にする */
+    transform: translateY(-2px); /* ぽこっと上に2ピクセル浮き上がらせる */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 影を強くする */
+}
+ .scratch-studio-card { 
+         border: 1px solid #e0e0e0; 
+        padding: 20px; 
+        border-radius: 12px; 
+        max-width: 500px; 
+        font-family: sans-serif; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        background-color: #ffffff;
+    }
+ .scratch-studio-card img { 
+        width: 100px; 
+        height: auto; 
+        border-radius: 8px; 
+        float: left; 
+        margin-right: 15px; 
+    }
+.scratch-studio-info { overflow: hidden; }
+.scratch-studio-title { margin: 0 0 8px 0; font-size: 1.2em; }
+.scratch-studio-title a { color: #1d63b8; text-decoration: none; }
+.scratch-studio-title a:hover { text-decoration: underline; }
+.scratch-studio-stats { font-size: 0.85em; color: #666; margin: 0; }
+.scratch-studio-desc { 
+        font-size: 0.9em; 
+        color: #444; 
+        background: #f9f9f9; 
+        padding: 10px; 
+        border-radius: 6px; 
+        clear: both; 
+        margin-top: 15px; 
+        white-space: pre-wrap; 
+    }
+
+ /* Scratch表示エリア全体のデザイン */
+.sc-project-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 360px; /* 必要に応じてサイズ調整してください */
+    overflow: hidden;
+    border: 1px solid #e1e8ed;
+    font-family: sans-serif;
+}
+.sc-thumbnail-container {
+    width: 100%;
+    padding-top: 75%; /* 4:3 アスペクト比 */
+    position: relative;
+    background-color: #f0f0f0;
+}
+.sc-thumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.sc-content {
+    padding: 16px;
+}
+.sc-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #1d1d1f;
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sc-author {
+    font-size: 0.85rem;
+    color: #6762f5;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+.sc-author:hover {
+    text-decoration: underline;
+}
+.sc-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #86868b;
+    border-top: 1px solid #f5f5f7;
+    padding-top: 10px;
+}

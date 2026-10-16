@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>マイ・ウェブサイト</title>
+    <!-- CSSファイルを読み込む -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ヘッダー部分 -->
+    <header>
+        <div class="logo">My Site</div>
+        <!-- メニューを開くボタン -->
+        <button id="menu-toggle">☰ メニュー</button>
+    </header>
+
+    <!-- 横から飛び出すメニュー画面（hrefを#目印に書き換えました） -->
+    <nav id="side-menu">
+        <ul>
+            <li><a href="#home">ホーム</a></li>
+            <li><a href="#service">scratchのプロジェクト</a></li>
+            <li><a href="#contact">myスタジオの情報</a></li>
+        </ul>
+    </nav>
+
+    <!-- 暗い背景（オーバーレイ） -->
+    <div id="overlay"></div>
+
+    <!-- メインのコンテンツ（ここを広く、長くしました） -->
+    <main>
+        
+        <!-- 🌟 ホームエリア（移動先の目印 id="home"） -->
+        <section id="home">
+            <h1>ようこそ、私のウェブサイトへ！</h1>
+            <p>JavaScriptとCSSを使って、動きのあるサイトを作っています。</p>
+
+        <!-- スライダーエリア -->
+        <div class="slider-container">
+            
+            <!-- 🌟 画像を横一列に並べるための「レール（トラック）」を作りました -->
+            <div id="slider-track" class="slider-track">
+                <img src="cat.png" alt="画像1">
+                <img src="GIF-1.png" alt="画像2">
+                <img src="GIF-3.png" alt="画像3">
+            </div>
+            
+            <!-- ボタンとドットはそのままです -->
+            <button id="prev-btn" class="slider-btn">◀ 前へ</button>
+            <button id="next-btn" class="slider-btn">次へ ▶</button>
+            <div id="dots-container" class="dots-container"></div>
+        </div>
+
+        </section>
+
+        <!-- 🌟 サービスエリア（移動先の目印 id="service"） -->
+        <section id="service" style="margin-top: 800px; padding: 50px 0;">
+            <h2>scratchのプロジェクト</h2>
+          <p>scサバイバー</p>
+<div id="scratch-project-area"><!-- ここにサムネイルと情報が自動で挿入されます --></div>
+
+          <div class="scratchbutton">
+         <a href="https://scratch.mit.edu/projects/1351034569/" target="_blank">
+   <p>scサバイバー</p> </div>
+</a>
+
+</section>
+
+        <!-- 🌟 お問い合わせエリア（移動先の目印 id="contact"） -->
+        <section id="contact" style="margin-top: 800px; padding: 50px 0; margin-bottom: 500px;">
+            <h2>スタジオの情報</h2>
+            <p>なんでもスタジオ2</p>
+            <!-- この場所にスクラッチのデータが自動で入ります -->
+        <div id="scratch-studio-box" class="scratch-studio-card">データを読み込み中...</div>
+
+        </section>
+
+    </main>
+
+    <!-- JSファイルを読み込む -->
+    <script src="main.js">
+    </script>
+<script>
+    (function() {
+        // 🛠️ ここを表示したい「スタジオID」に書き換えてください
+        const studioId = "51031704"; 
+
+        async function loadScratchStudio() {
+            const box = document.getElementById('scratch-studio-box');
+            if (!box) return;
+
+            try {
+                // 💡 CORS制限を回避できる「TurboWarp Trampoline API」経由でデータを取得します
+                const response = await fetch(`https://trampoline.turbowarp.org/api/studios/${studioId}`);
+                if (!response.ok) throw new Error("データの取得に失敗しました");
+                
+                const data = await response.json();
+
+                // 説明文が長すぎる場合は150文字で切る設定
+                const shortDesc = data.description.length > 150 
+                    ? data.description.substr(0, 150) + "..." 
+                    : data.description;
+
+                // 箱の中身をAPIデータで書き換える
+                box.innerHTML = `
+                    <div class="scratch-studio-info">
+                        <img src="${data.image}" alt="スタジオサムネイル">
+                        <h3 class="scratch-studio-title">
+                            <a href="https://mit.edu{studioId}" target="_blank">${data.title}</a>
+                        </h3>
+                        <p class="scratch-studio-stats">
+                            📂 作品: ${data.stats.projects}個 | 👥 フォロワー: ${data.stats.followers}人
+                        </p>
+                    </div>
+                    <div class="scratch-studio-desc">${shortDesc}</div>
+                `;
+            } catch (error) {
+                box.innerHTML = `<p style="color:red; font-size:0.9em;">エラー: スタジオ情報を読み込めませんでした。</p>`;
+            }
+        }
+
+        // ページが読み込まれたら実行
+        window.addEventListener('DOMContentLoaded', loadScratchStudio);
+    })();
+</script>
+
+    <script>
+        // 【設定】表示したいScratchのプロジェクトIDを入力してください
+        const PROJECT_ID = '104615392'; // 例としてサンプルのIDを入れています
+
+        // Scratch公式の公開APIエンドポイント
+        const API_URL = `https://mit.edu{PROJECT_ID}`;
+
+        async function fetchScratchProject() {
+            const container = document.getElementById('scratch-container');
+            
+            try {
+                // APIからプロジェクト情報を取得
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error('プロジェクトが見つからないか、データを取得できませんでした。');
+                }
+                const data = await response.json();
+
+                // サムネイル画像のURL（デフォルトで480x360の画像が提供されます）
+                const thumbnailUrl = data.images['480x360'];
+                
+                // HTML構造の組み立て
+                container.innerHTML = `
+                    <div class="project-card">
+                        <div class="thumbnail-container">
+                            <a href="https://mit.edu{data.id}" target="_blank">
+                                <img class="thumbnail" src="${thumbnailUrl}" alt="${data.title}のサムネイル">
+                            </a>
+                        </div>
+                        <div class="content">
+                            <h2 class="title" title="${data.title}">${data.title}</h2>
+                            <a class="author" href="https://mit.edu{data.author.username}" target="_blank">
+                                By ${data.author.username}
+                            </a>
+                            <div class="stats">
+                                <span>👁️ ${data.stats.views.toLocaleString()} 回視聴</span>
+                                <span>❤️ ${data.stats.loves.toLocaleString()}</span>
+                                <span>⭐ ${data.stats.favorites.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                // エラー時の表示
+                container.innerHTML = `<div class="error">エラー: ${error.message}</div>`;
+                console.error(error);
+            }
+        }
+
+        // ページ読み込み時に実行
+        fetchScratchProject();
+    </script>
+
+
+</body>
+</html>
